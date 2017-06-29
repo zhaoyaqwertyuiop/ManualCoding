@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.manualcoding.manualcoding.MainActivity">
+
+    <com.manualcoding.manualcoding.ManualCodingView
+        android:id="@+id/manualCodingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.manualcoding.manualcoding.ManualCodingView>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打码"
+        android:checked="false"/>
+
+    <Button
+        android:id="@+id/clearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="撤销"
+        android:onClick="onClick"/>
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="保存"
+        android:onClick="onClick"/>
+</RelativeLayout>

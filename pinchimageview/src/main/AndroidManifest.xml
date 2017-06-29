@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.pinchimageview">
+
+    <application android:allowBackup="true" android:label="@string/app_name"
+        android:supportsRtl="true">
+
+        <activity
+            android:name=".PicViewActivity"
+            android:theme="@style/pic_view" android:screenOrientation="portrait"
+            android:exported="true"/>
+        <activity android:name=".PagerActivity" android:screenOrientation="portrait"
+            android:exported="true"/>
+        <activity android:name=".BigImageActivity" android:screenOrientation="portrait"
+            android:exported="true"></activity>
+
+    </application>
+
+</manifest>
