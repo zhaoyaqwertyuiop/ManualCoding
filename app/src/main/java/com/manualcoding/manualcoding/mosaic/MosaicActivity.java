@@ -1,41 +1,45 @@
-package com.manualcoding.manualcoding;
+package com.manualcoding.manualcoding.mosaic;
 
 import android.Manifest;
 import android.content.Intent;
 import android.os.Environment;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.manualcoding.manualcoding.mosaic.MosaicActivity;
+import com.manualcoding.manualcoding.BitmapFileUtil;
+import com.manualcoding.manualcoding.FileUtil;
+import com.manualcoding.manualcoding.MainActivity;
+import com.manualcoding.manualcoding.R;
+import com.manualcoding.manualcoding.TimeToStringUtil;
 
 import java.io.File;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, EasyPermissions.PermissionCallbacks{
+public class MosaicActivity extends AppCompatActivity implements View.OnClickListener, EasyPermissions.PermissionCallbacks{
 
-    private ManualCodingView manualCodingView;
+    private MosaicView mosaicView;
     private CheckBox checkbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        DemoPath dp = new DemoPath(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-//        setContentView(dp);
-        this.manualCodingView = (ManualCodingView) super.findViewById(R.id.manualCodingView);
-        this.checkbox = (CheckBox) super.findViewById(R.id.checkbox);
+        setContentView(R.layout.activity_mosaic);
 
-        manualCodingView.setImageResource(R.mipmap.ic_recyclerview_04);
+        mosaicView = (MosaicView) super.findViewById(R.id.mosaicView);
+
+        mosaicView.setImageResource(R.mipmap.ic_recyclerview_04);
+
+        this.checkbox = (CheckBox) super.findViewById(R.id.checkbox);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                manualCodingView.setMasking(isChecked);
+                mosaicView.setMasking(isChecked);
             }
         });
     }
@@ -44,14 +48,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clearBtn: // 清空
-                manualCodingView.cancelLastMask();
-//                manualCodingView.clean();
+                mosaicView.clean();
                 break;
             case R.id.saveBtn: // 保存
                 getSDPremission();
-                break;
-            case R.id.mosaicBtn: // 打马赛克
-                startActivity(new Intent(this, MosaicActivity.class));
                 break;
             default: break;
         }
@@ -77,18 +77,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (FileUtil.checkSDCardAvaliable()) {
                 file = new File(Environment.getExternalStorageDirectory() + "/" + name);
             } else {
-                file = new File(MainActivity.this.getFilesDir() + "/"  + name);
+                file = new File(MosaicActivity.this.getFilesDir() + "/"  + name);
             }
-            if (new BitmapFileUtil().saveBitmapFile(file, manualCodingView.getMaskedBitmap())) {
-                Toast.makeText(MainActivity.this, "保存成功:" + file.toString(), Toast.LENGTH_SHORT).show();
+            if (new BitmapFileUtil().saveBitmapFile(file, mosaicView.getMaskedBitmap())) {
+                Toast.makeText(MosaicActivity.this, "保存成功:" + file.toString(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(MainActivity.this, "保存失败:", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MosaicActivity.this, "保存失败:", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void denied() {
-            Toast.makeText(MainActivity.this, "没有读写权限,请授权", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MosaicActivity.this, "没有读写权限,请授权", Toast.LENGTH_SHORT).show();
         }
     };
 
