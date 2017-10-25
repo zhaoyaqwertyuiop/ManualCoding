@@ -24,7 +24,7 @@ public class ManualCodingView extends PinchImageView {
 
     private boolean isMasking = false; // 正在打码,默认为false
     private Paint mPaint;
-    private List<Mask> masks = new ArrayList<>();
+    private List<Mask> maskList = new ArrayList<>();
     private Mask currMask;
     private RectF rectF;
     private Path mPath = new Path();
@@ -67,7 +67,7 @@ public class ManualCodingView extends PinchImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for (Mask mask : masks) {
+        for (Mask mask : maskList) {
             drawMaskToView(canvas, mask);
         }
         if(currMask != null) {
@@ -112,9 +112,9 @@ public class ManualCodingView extends PinchImageView {
         } else if (action == MotionEvent.ACTION_POINTER_DOWN && getPinchMode() == PINCH_MODE_SCROLL) { // 多点按下,不打码
             currMask = null;
             return super.onTouchEvent(event);
-        } else if (action == MotionEvent.ACTION_UP && getPinchMode() == PINCH_MODE_SCROLL) { // 抬起,把currMask加入到masks
+        } else if (action == MotionEvent.ACTION_UP && getPinchMode() == PINCH_MODE_SCROLL) { // 抬起,把currMask加入到maskList
             if(currMask != null && currMask.points.size() > 1) {
-                masks.add(currMask);
+                maskList.add(currMask);
                 currMask = null;
             }
             return super.onTouchEvent(event);
@@ -153,14 +153,14 @@ public class ManualCodingView extends PinchImageView {
 
     /** 清除全部打码 */
     public void clean() {
-        masks.clear();
+        maskList.clear();
         invalidate();
     }
 
     /** 撤销上一次打码 */
     public void cancelLastMask() {
-        if (masks.isEmpty()) return;
-        masks.remove(masks.size() - 1);
+        if (maskList.isEmpty()) return;
+        maskList.remove(maskList.size() - 1);
         invalidate();
     }
 
@@ -170,7 +170,7 @@ public class ManualCodingView extends PinchImageView {
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
         drawable.draw(canvas);
-        for (Mask mask : masks) {
+        for (Mask mask : maskList) {
             drawMaskToBitmap(canvas, mask);
         }
         return bitmap;
@@ -213,5 +213,17 @@ public class ManualCodingView extends PinchImageView {
             this.radius = radius;
             this.points = new ArrayList<>();
         }
+    }
+
+    public List<Mask> getMasks() {
+        return maskList;
+    }
+
+    public void setMasks(List<Mask> maskList) {
+        this.maskList.clear();
+        if (maskList != null) {
+            this.maskList.addAll(maskList);
+        }
+        invalidate();
     }
 }

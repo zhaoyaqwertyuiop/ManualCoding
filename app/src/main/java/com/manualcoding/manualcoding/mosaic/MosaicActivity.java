@@ -1,6 +1,8 @@
 package com.manualcoding.manualcoding.mosaic;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +13,9 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.manualcoding.manualcoding.BitmapFileUtil;
+import com.manualcoding.manualcoding.DataUtil;
 import com.manualcoding.manualcoding.FileUtil;
+import com.manualcoding.manualcoding.GsonUtil;
 import com.manualcoding.manualcoding.MainActivity;
 import com.manualcoding.manualcoding.R;
 import com.manualcoding.manualcoding.TimeToStringUtil;
@@ -33,7 +37,11 @@ public class MosaicActivity extends AppCompatActivity implements View.OnClickLis
 
         mosaicView = (MosaicView) super.findViewById(R.id.mosaicView);
 
-        mosaicView.setImageResource(R.mipmap.ic_recyclerview_04);
+        mosaicView.setImageResource(R.mipmap.test);
+        String maskListStr = (String) DataUtil.getInstance().getData("maskListStr");
+        if (maskListStr != null) {
+            mosaicView.setMaskList(GsonUtil.getInstance().fromJsonList(maskListStr, MosaicView.Mask.class));
+        }
 
         this.checkbox = (CheckBox) super.findViewById(R.id.checkbox);
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -49,6 +57,7 @@ public class MosaicActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.clearBtn: // 清空
                 mosaicView.clean();
+                DataUtil.getInstance().clean();
                 break;
             case R.id.saveBtn: // 保存
                 getSDPremission();
@@ -81,6 +90,8 @@ public class MosaicActivity extends AppCompatActivity implements View.OnClickLis
             }
             if (new BitmapFileUtil().saveBitmapFile(file, mosaicView.getMaskedBitmap())) {
                 Toast.makeText(MosaicActivity.this, "保存成功:" + file.toString(), Toast.LENGTH_SHORT).show();
+                String maskListStr = GsonUtil.getInstance().getGson().toJson(mosaicView.getMaskList());
+                DataUtil.getInstance().saveData("maskListStr", maskListStr);
             } else {
                 Toast.makeText(MosaicActivity.this, "保存失败:", Toast.LENGTH_SHORT).show();
             }
