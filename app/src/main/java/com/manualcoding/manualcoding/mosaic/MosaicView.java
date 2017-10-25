@@ -38,6 +38,11 @@ public class MosaicView extends PinchImageView {
 
     private List<Mask> maskList = new ArrayList<>();
     private Mask currMask;
+    private boolean canEdit = true; // 是否可以允许打码,默认允许
+
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
+    }
 
     public MosaicView(Context context) {
         super(context);
@@ -51,8 +56,17 @@ public class MosaicView extends PinchImageView {
         super(context, attrs, defStyle);
     }
 
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        init(); // 把init写在这里就可以支持网路图片
+    }
+
     private void init() {
         Drawable drawable = super.getDrawable();
+        if (drawable == null) {
+            return;
+        }
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         mBitmap = bitmap;
         Canvas canvas = new Canvas(bitmap);
@@ -226,12 +240,17 @@ public class MosaicView extends PinchImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        rectF = getImageBound(rectF);
-        canvas.clipRect(rectF);
+        if (!canEdit) {
+            return;
+        }
         if (mBitmap == null) {
             init();
         }
-        canvas.drawBitmap(mBitmap, null, rectF, null);
+        if (mBitmap != null) {
+            rectF = getImageBound(rectF);
+            canvas.clipRect(rectF);
+            canvas.drawBitmap(mBitmap, null, rectF, null);
+        }
     }
 
     @Override
